@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-// --- ESTRUCTURAS DEL JUEGO DE COMBATE ---
+// ESTRUCTURAS DEL JUEGO DE COMBAT
 
 typedef struct {
     char palabraEspanol[30];
@@ -18,7 +18,7 @@ typedef struct {
     int ataqueBase;
 } Enemigo;
 
-// Usaremos una versión simplificada del Personaje gerado el el archivo origen o index
+// Usaremos una version simplificada del Personaje gerado el el archivo origen o index
 typedef struct {
     char nickname[20];
     int vidaActual;
@@ -38,7 +38,7 @@ void pausarCombate() {
     getchar();
 }
 
-// --- LÓGICA DEL JUEGO DE COMBATE ---
+// LOGICA DEL JUEGO DE COMBATE 
 
 //Pendinte, agregar mas cantidad de enemigos segun el Progeso de los dema, tematicas y vocabulario
 Enemigo crearEnemigo(int nivelDificultad) {
@@ -60,25 +60,25 @@ Enemigo crearEnemigo(int nivelDificultad) {
 // Cargar algunos hechizos de prueba , con intencion de que sean tomdaso despues de un archivo. txt
 void cargarHechizosPrueba(Hechizo lista[], int *cantidad) {
     strcpy(lista[0].palabraEspanol, "Fuego");
-    strcpy(lista[0].palabraIndigena, "Tletl"); // Náhuatl
+    strcpy(lista[0].palabraIndigena, "Tletl"); // NÃ¡huatl
     lista[0].danio = 30;
 
     strcpy(lista[1].palabraEspanol, "Agua");
-    strcpy(lista[1].palabraIndigena, "Atl"); // Náhuatl
+    strcpy(lista[1].palabraIndigena, "Atl"); // NÃ¡huatl
     lista[1].danio = 25;
 
     strcpy(lista[2].palabraEspanol, "Viento");
-    strcpy(lista[2].palabraIndigena, "Ehecatl"); // Náhuatl
+    strcpy(lista[2].palabraIndigena, "Ehecatl"); // NÃ¡huatl
     lista[2].danio = 20;
     
     *cantidad = 3;
 }
 
-// Función principal del minijuego 
+// Funcion principal del minijuego 
 int iniciarCombate(char *nicknameJugador) {
     JugadorBatalla jugador;
     strcpy(jugador.nickname, nicknameJugador);
-    jugador.vidaMax = 100; // Esto debería venir en base al el nivel del peroonaje y su cantiad de puntos obtenidos por jugar otras cosas
+    jugador.vidaMax = 100; // Esto deberia venir en base al el nivel del peroonaje y su cantiad de puntos obtenidos por jugar otras cosas
     jugador.vidaActual = jugador.vidaMax;
     jugador.experienciaGanada = 0;
 
@@ -106,42 +106,42 @@ int iniciarCombate(char *nicknameJugador) {
         printf("----------------\n");
 
         // Turno del Jugador
-        printf("¡Es tu turno! Elige un hechizo (palabra a traducir):\n");
+        printf("Â¡Es tu turno! Elige un hechizo (palabra a traducir):\n");
         for(int i = 0; i < totalHechizos; i++) {
-            printf("%d. %s (Daño potencial: %d)\n", i+1, grimoire[i].palabraEspanol, grimoire[i].danio);
+            printf("%d. %s (DaÃ±o potencial: %d)\n", i+1, grimoire[i].palabraEspanol, grimoire[i].danio);
         }
-        printf("Opción: ");
+        printf("OpciÃ³n: ");
         scanf("%d", &opcionHechizo);
         limpiarBufferCombate();
 
         if (opcionHechizo < 1 || opcionHechizo > totalHechizos) {
-            printf("¡Te tropezaste! Perdiste tu turno por elegir una opcion invalida.\n");
+            printf("Â¡Te tropezaste! Perdiste tu turno por elegir una opcion invalida.\n");
         } else {
             int indice = opcionHechizo - 1;
             printf("\nPara lanzar el hechizo de '%s', escribe su traduccion en Nahuatl:\n> ", grimoire[indice].palabraEspanol);
             fgets(respuestaUsuario, 30, stdin);
-            respuestaUsuario[strcspn(respuestaUsuario, "\n")] = 0; // Eliminar salto de línea
+            respuestaUsuario[strcspn(respuestaUsuario, "\n")] = 0; // Eliminar salto de lÃ­nea
 
-            // Verificación simple (ignorando mayúsculas/minúsculas para facilitar)
+            // VerificaciÃ³n simple (ignorando mayÃºsculas/minÃºsculas para facilitar)
             if (strcasecmp(respuestaUsuario, grimoire[indice].palabraIndigena) == 0) {
-                printf("\n¡CORRECTO! ¡Lanzaste %s!\n", grimoire[indice].palabraIndigena);
-                printf("Causas %d puntos de daño a %s.\n", grimoire[indice].danio, enemigo.nombre);
+                printf("\nÂ¡CORRECTO! Â¡Lanzaste %s!\n", grimoire[indice].palabraIndigena);
+                printf("Causas %d puntos de daÃ±o a %s.\n", grimoire[indice].danio, enemigo.nombre);
                 enemigo.vidaActual -= grimoire[indice].danio;
             } else {
-                printf("\n¡FATASTE! La palabra correcta era '%s'.\n", grimoire[indice].palabraIndigena);
-                printf("El hechizo explota en tu cara, recibes 5 de daño.\n");
+                printf("\nÂ¡FATASTE! La palabra correcta era '%s'.\n", grimoire[indice].palabraIndigena);
+                printf("El hechizo explota en tu cara, recibes 5 de daÃ±o.\n");
                 jugador.vidaActual -= 5;
             }
         }
         
-        // Verificar si el enemigo murió antes de su turno
+        // Verificar si el enemigo muriÃ³ antes de su turno
         if (enemigo.vidaActual <= 0) break;
 
         pausarCombate();
 
         // Turno del Enemigo
         printf("\n--- Turno del Enemigo ---\n");
-        printf("%s te ataca y causa %d de daño!\n", enemigo.nombre, enemigo.ataqueBase);
+        printf("%s te ataca y causa %d de daÃ±o!\n", enemigo.nombre, enemigo.ataqueBase);
         jugador.vidaActual -= enemigo.ataqueBase;
         pausarCombate();
 
@@ -151,7 +151,7 @@ int iniciarCombate(char *nicknameJugador) {
     // Fin del combate
     system("cls");
     if (jugador.vidaActual > 0) {
-        printf("\n¡VICTORIA!\n");
+        printf("\nÂ¡VICTORIA!\n");
         printf("Has derrotado a %s.\n", enemigo.nombre);
         jugador.experienciaGanada = 50; // Valor de ejemplo
         printf("Ganas %d puntos de experiencia.\n", jugador.experienciaGanada);
@@ -164,9 +164,10 @@ int iniciarCombate(char *nicknameJugador) {
 }
 
 // MAIN DE PRUEBA PARA EL JUEGO 1
-// (Esto lo quitarás cuando lo integres a tu main principal)
+// (Esto lo quitarÃ¡s cuando lo integres a tu main principal)
 int main() {
     int expGanada = iniciarCombate("GuerreroJaguar");
-    printf("\n[DEBUG] Combate terminado. EXP retornada al menú principal: %d\n", expGanada);
+    printf("\n[DEBUG] Combate terminado. EXP retornada al menÃº principal: %d\n", expGanada);
     return 0;
 }
+
