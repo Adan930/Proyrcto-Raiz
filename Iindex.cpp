@@ -1,8 +1,9 @@
+// #include <cstddef> // No es estrictamente necesaria aquÃ­, pero no hace daÃ±o.
 #include <iostream>
 #include <string>
 #include <cstdlib>
 #include <ctime>
-// #include <cstddef> // No es estrictamente necesaria aquí, pero no hace daño.
+#include <cstdio> // ? Para fopen, fprintf, fclose
 using namespace std;
 
 // ======================= ESTRUCTURAS ===========================
@@ -24,17 +25,17 @@ struct Personaje {
 // ======================= FUNCIONES DEL SISTEMA ===========================
 
 Juego* crearListaJuegos() {
-    Juego* primero = NULL; // CAMBIO: nullptr -> NULL
-    Juego* ultimo = NULL;  // CAMBIO: nullptr -> NULL
-    string nombres[4] = {"Memoria", "Adivinanzas", "Traducción", "Trivia"};
+    Juego* primero = NULL;
+    Juego* ultimo = NULL;
+    string nombres[4] = {"Memoria", "Adivinanzas", "TraducciÃ³n", "Trivia"};
 
     for (int i = 0; i < 4; i++) {
         Juego* nuevo = new Juego;
         nuevo->nombre = nombres[i];
         nuevo->puntajeMaximo = 0;
-        nuevo->siguiente = NULL; // CAMBIO: nullptr -> NULL
+        nuevo->siguiente = NULL;
 
-        if (primero == NULL) // CAMBIO: nullptr -> NULL
+        if (primero == NULL)
             primero = nuevo;
         else
             ultimo->siguiente = nuevo;
@@ -53,21 +54,19 @@ void verPerfil(const Personaje* pj) {
     cout << "Progreso por juego:" << endl;
     cout << "1. Memoria: " << pj->progreso[0] << "%" << endl;
     cout << "2. Adivinanzas: " << pj->progreso[1] << "%" << endl;
-    cout << "3. Traducción: " << pj->progreso[2] << "%" << endl;
+    cout << "3. TraducciÃ³n: " << pj->progreso[2] << "%" << endl;
     cout << "4. Trivia: " << pj->progreso[3] << "%" << endl;
     cout << "==============================\n" << endl;
 }
 
-// Subir nivel del personaje
 void subirNivel(Personaje* pj) {
     pj->nivel++;
-    pj->xp -= pj->xpNecesario; // Conserva la experiencia sobrante
+    pj->xp -= pj->xpNecesario;
     pj->xpNecesario += 100;
-    cout << "\n¡Has subido al nivel " << pj->nivel << "!" << endl;
+    cout << "\nÂ¡Has subido al nivel " << pj->nivel << "!" << endl;
     cout << "Nuevas habilidades desbloqueadas." << endl;
 }
 
-// Actualizar progreso después de jugar
 void actualizarProgreso(Personaje* pj) {
     while (pj->xp >= pj->xpNecesario) {
         subirNivel(pj);
@@ -89,14 +88,37 @@ void mostrarResultados(Personaje* pj, int puntos, int juegoIndex) {
     cout << "------------------------------" << endl;
 }
 
-// Simulación del módulo de juego
 int jugarModulo(const string& nombre) {
     cout << "\nJugando: " << nombre << "..." << endl;
-    int puntos = rand() % 200 + 50; // puntaje aleatorio entre 50 y 250
+    int puntos = rand() % 200 + 50;
     return puntos;
 }
 
-// ======================= MENÚ PRINCIPAL ===========================
+// ? NUEVA FUNCIÃ“N: guarda los datos usando fopen/fprintf/fclose
+void guardarPersonaje(const Personaje* pj) {
+    FILE* archivo = fopen("personaje.txt", "a"); // crea o reemplaza el archivo
+    if (archivo == NULL) {
+        cout << "Error al crear el archivo de personaje." << endl;
+        return;
+    }
+
+    fprintf(archivo, "===== PERFIL DEL JUGADOR =====\n");
+    fprintf(archivo, "Nombre: %s\n", pj->nombre.c_str());
+    fprintf(archivo, "Nivel: %d\n", pj->nivel);
+    fprintf(archivo, "Experiencia: %d/%d\n", pj->xp, pj->xpNecesario);
+    fprintf(archivo, "Palabras aprendidas: %d\n", pj->palabrasAprendidas);
+    fprintf(archivo, "Progreso por juego:\n");
+    fprintf(archivo, "1. Memoria: %d%%\n", pj->progreso[0]);
+    fprintf(archivo, "2. Adivinanzas: %d%%\n", pj->progreso[1]);
+    fprintf(archivo, "3. TraducciÃ³n: %d%%\n", pj->progreso[2]);
+    fprintf(archivo, "4. Trivia: %d%%\n", pj->progreso[3]);
+    fprintf(archivo, "==============================\n");
+
+    fclose(archivo);
+    cout << "\n? Datos del personaje guardados en 'personaje.txt'.\n";
+}
+
+// ======================= MENÃš PRINCIPAL ===========================
 
 void menuPrincipal(Personaje* pj, Juego* listaJuegos) {
     int opcion;
@@ -111,7 +133,7 @@ void menuPrincipal(Personaje* pj, Juego* listaJuegos) {
         if (cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
-            cout << "Entrada no válida. Intente de nuevo.\n";
+            cout << "Entrada no vÃ¡lida. Intente de nuevo.\n";
             continue;
         }
 
@@ -120,7 +142,7 @@ void menuPrincipal(Personaje* pj, Juego* listaJuegos) {
             cout << "\n--- Seleccione un juego ---" << endl;
             Juego* actual = listaJuegos;
             int i = 1;
-            while (actual != NULL) { // CAMBIO: nullptr -> NULL
+            while (actual != NULL) {
                 cout << i << ". " << actual->nombre << " (Record: " << actual->puntajeMaximo << ")" << endl;
                 actual = actual->siguiente;
                 i++;
@@ -133,7 +155,7 @@ void menuPrincipal(Personaje* pj, Juego* listaJuegos) {
             if (cin.fail() || seleccion < 1 || seleccion > 4) {
                 cin.clear();
                 cin.ignore(1000, '\n');
-                cout << "Opción inválida." << endl;
+                cout << "OpciÃ³n invÃ¡lida." << endl;
                 break;
             }
 
@@ -153,10 +175,11 @@ void menuPrincipal(Personaje* pj, Juego* listaJuegos) {
             verPerfil(pj);
             break;
         case 3:
-            cout << "Saliendo del sistema..." << endl;
+            cout << "\nSaliendo del sistema..." << endl;
+            guardarPersonaje(pj); // ? guarda al salir
             break;
         default:
-            cout << "Opción no válida." << endl;
+            cout << "OpciÃ³n no vÃ¡lida." << endl;
         }
 
     } while (opcion != 3);
@@ -164,8 +187,7 @@ void menuPrincipal(Personaje* pj, Juego* listaJuegos) {
 
 // ======================= PROGRAMA PRINCIPAL ===========================
 
-int main() {
-    // CAMBIO: nullptr -> NULL en time()
+ main() {
     srand(static_cast<unsigned int>(time(NULL)));
 
     Personaje jugador;
@@ -183,12 +205,14 @@ int main() {
 
     menuPrincipal(&jugador, listaJuegos);
 
-    // Liberar memoria
-    while (listaJuegos != NULL) { // CAMBIO: nullptr -> NULL
+    while (listaJuegos != NULL) {
         Juego* temp = listaJuegos;
         listaJuegos = listaJuegos->siguiente;
         delete temp;
     }
 
+}
+
     return 0;
 }
+
